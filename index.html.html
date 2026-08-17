@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mediterraneo Buffet — Simulador</title>
+<style>
+:root{--bg:#090909;--card:#121212;--card2:#0d0d0d;--txt:#f5f1e8;--muted:#aaa39a;--gold:#c9a45c;--gold2:#e1c783;--line:#332e26}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+main{max-width:1180px;margin:0 auto;padding:32px 18px 70px}
+header{text-align:center;padding:24px 0 38px}
+.brand{font-family:Georgia,serif;color:var(--gold);letter-spacing:.22em;font-size:12px}
+h1,h2{font-family:Georgia,serif;font-weight:400}
+h1{font-size:44px;line-height:1.08;margin:14px 0 12px}
+.intro{max-width:720px;margin:0 auto;color:var(--muted);font-size:16px;line-height:1.65}
+.intro b{display:block;color:var(--txt);font:22px Georgia,serif;margin-bottom:6px}
+.consultant{margin:20px auto 0;padding-top:14px;border-top:1px solid var(--line);max-width:520px;color:var(--muted);font-size:12px}
+.consultant strong{color:var(--txt)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.card{background:var(--card);border:1px solid var(--line);padding:24px}
+.full{grid-column:1/-1}
+.kicker{color:var(--gold);font-size:10px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px}
+h2{font-size:27px;margin:0 0 8px}
+.lead{color:var(--muted);line-height:1.55;margin:0 0 18px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:7px}
+input[type=number],select{width:100%;height:50px;padding:0 14px;font-size:16px!important;color:var(--txt);background:#0a0a0a;border:1px solid #3a352d;border-radius:0!important;-webkit-appearance:none;appearance:none}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--gold) 50%),linear-gradient(135deg,var(--gold) 50%,transparent 50%);background-position:calc(100% - 18px) 22px,calc(100% - 13px) 22px;background-size:5px 5px;background-repeat:no-repeat;padding-right:38px}
+.date-row{display:grid;grid-template-columns:.7fr 1fr 1.1fr;gap:8px}
+.info-line{margin-top:9px;color:var(--gold2);font-size:13px;line-height:1.45}
+.menu{background:var(--card2);border:1px solid var(--line);padding:20px}
+.menu-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.menu-title{font:24px Georgia,serif}
+.menu-price{color:var(--gold2);font-size:14px;text-align:right}
+.tiers{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 2px}
+.tier{border:1px solid #3a352d;padding:7px 9px;color:var(--muted);font-size:11px}
+.menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:17px}
+.menu-item{border-top:1px solid #29251f;padding-top:11px}
+.menu-item b{display:block;font-size:12px;margin-bottom:4px}
+.menu-item span{color:var(--muted);font-size:11px;line-height:1.5}
+.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.choice-card{display:block;position:relative;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.choice-card input{position:absolute;opacity:0;width:1px;height:1px}
+.choice-inner{display:flex;flex-direction:column;height:100%;min-height:190px;border:1px solid #383229;background:var(--card2);padding:17px}
+.choice-card input:checked + .choice-inner{border-color:var(--gold);background:#18140f;box-shadow:inset 0 0 0 1px var(--gold)}
+.choice-title{font:19px Georgia,serif;margin-bottom:5px}
+.choice-price{color:var(--gold2);font-size:12px;margin-bottom:10px}
+.choice-desc{color:var(--muted);font-size:11px;line-height:1.5;flex:1}
+.choice-action{display:inline-block;align-self:flex-start;margin-top:12px;border:1px solid #5a4a30;padding:7px 10px;color:var(--gold2);font-size:10px;text-transform:uppercase;letter-spacing:.07em}
+.choice-card input:checked + .choice-inner .choice-action{background:var(--gold);border-color:var(--gold);color:#111}
+.fixed{border:1px solid var(--gold);background:#18140f;padding:18px}
+.fixed-title{font:19px Georgia,serif}.fixed-price{color:var(--gold2);font-size:13px;margin:5px 0 9px}.fixed-desc{color:var(--muted);font-size:11px;line-height:1.55}
+.summary{background:#101010;border:1px solid var(--line);padding:22px}
+.row{display:flex;justify-content:space-between;gap:18px;padding:10px 0;border-bottom:1px solid #29251f}
+.row span{color:var(--muted)}.row strong{text-align:right}
+.total{border-top:1px solid var(--gold);margin-top:18px;padding-top:18px}.total small{display:block;color:var(--muted);letter-spacing:.08em}.total strong{display:block;color:var(--gold2);font:38px Georgia,serif;margin-top:5px}
+.cta{width:100%;min-height:54px;margin-top:18px;padding:14px;background:var(--gold);border:0;color:#111;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.07em;-webkit-appearance:none;appearance:none;border-radius:0;touch-action:manipulation}
+.note{color:#847e74;font-size:11px;line-height:1.55;margin-top:12px}
+.optional{display:inline-block;color:var(--gold2);border:1px solid #51442e;padding:4px 7px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;margin-left:6px;vertical-align:middle}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.choice-grid,.menu-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){main{padding:24px 13px 55px}.card{padding:19px 15px}h1{font-size:35px}.fields,.choice-grid,.menu-grid{grid-template-columns:1fr}.menu-head{display:block}.menu-price{text-align:left;margin-top:8px}.choice-inner{min-height:0}.row{align-items:flex-start;font-size:13px}.row strong{max-width:62%;word-break:break-word}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="brand">MEDITERRANEO · BUFFET</div>
+<h1>Uma experiência personalizada</h1>
+<p class="intro"><b>Monte seu evento.</b>Escolha os elementos que combinam com sua celebração. Esta é uma simulação inicial; a configuração e o valor final serão confirmados pelo nosso consultor.</p>
+<div class="consultant">Seu atendimento: <strong>Alessandra Fernandes</strong> · Consultora Mediterraneo</div>
+</header>
+
+<div class="grid">
+<section class="card">
+<div class="kicker">01 · Seu evento</div>
+<h2>Comece pela sua celebração</h2>
+<p class="lead">Informe os dados iniciais. A data foi dividida em três campos para funcionar de forma estável também no Safari do iPhone.</p>
+<div class="fields">
+<div class="field"><label>Tipo de evento</label><select id="event" onchange="recalculate()"><option>Casamento</option><option>Debutante</option><option>Aniversário</option><option>Bodas</option><option>Evento Corporativo</option></select></div>
+<div class="field"><label>Número de convidados</label><input id="guests" type="number" min="1" step="1" value="100" inputmode="numeric" oninput="recalculate()" onchange="recalculate()" onblur="recalculate()"></div>
+<div class="field">
+<label>Data prevista</label>
+<div class="date-row">
+<select id="day" onchange="recalculate()"><option value="">Dia</option><option value="1">01</option><option value="2">02</option><option value="3">03</option><option value="4">04</option><option value="5">05</option><option value="6">06</option><option value="7">07</option><option value="8">08</option><option value="9">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option></select>
+<select id="month" onchange="recalculate()"><option value="">Mês</option><option value="1">Jan</option><option value="2">Fev</option><option value="3">Mar</option><option value="4">Abr</option><option value="5">Mai</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Ago</option><option value="9">Set</option><option value="10">Out</option><option value="11">Nov</option><option value="12">Dez</option></select>
+<select id="year" onchange="recalculate()"><option value="">Ano</option><option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option><option value="2031">2031</option><option value="2032">2032</option><option value="2033">2033</option><option value="2034">2034</option><option value="2035">2035</option></select>
+</div>
+</div>
+<div class="field"><label>Dia do evento</label><div id="dayLabel" class="info-line">Selecione uma data</div></div>
+</div>
+</section>
+
+<section class="card">
+<div class="kicker">02 · Espaço</div>
+<h2>Escolha onde celebrar</h2>
+<p class="lead">Locação e sonorização variam conforme o espaço e o dia da semana.</p>
+<div class="field"><label>Espaço</label><select id="venue" onchange="recalculate()"><option value="Bistrô Cantareira" data-sat="5000" data-weekday="3000" data-sound="990">Bistrô Cantareira</option>
+<option value="Jardim São Bento" data-sat="6000" data-weekday="5000" data-sound="1190">Jardim São Bento</option>
+<option value="Conceição" data-sat="5000" data-weekday="3000" data-sound="990">Conceição</option>
+<option value="Ataliba Leonel" data-sat="8000" data-weekday="6000" data-sound="1290">Ataliba Leonel</option>
+<option value="Maria Cândida" data-sat="7000" data-weekday="5000" data-sound="1290">Maria Cândida</option>
+<option value="Cantagalo Garden" data-sat="7000" data-weekday="5000" data-sound="1190">Cantagalo Garden</option>
+<option value="Pedreira de Freitas" data-sat="7000" data-weekday="5000" data-sound="1190">Pedreira de Freitas</option>
+<option value="Euclides Pacheco" data-sat="6000" data-weekday="4000" data-sound="1190">Euclides Pacheco</option>
+<option value="Dois de Julho Garden" data-sat="6000" data-weekday="4000" data-sound="1190">Dois de Julho Garden</option>
+<option value="Casa Dois de Julho" data-sat="6000" data-weekday="4000" data-sound="1190">Casa Dois de Julho</option>
+<option value="Costa Aguiar Garden" data-sat="8000" data-weekday="6000" data-sound="1290">Costa Aguiar Garden</option>
+<option value="João Ramalho (Sumaré)" data-sat="6000" data-weekday="4000" data-sound="1190">João Ramalho (Sumaré)</option>
+<option value="Bosque Maia Master" data-sat="7000" data-weekday="5000" data-sound="1190">Bosque Maia Master</option>
+<option value="Casa Maia — Guarulhos" data-sat="5000" data-weekday="3000" data-sound="990">Casa Maia — Guarulhos</option>
+<option value="Conselheiro" data-sat="9000" data-weekday="7000" data-sound="3500">Conselheiro</option></select></div>
+<div id="venueInfo" class="info-line"></div>
+</section>
+
+<section class="card full">
+<div class="kicker">03 · Gastronomia</div>
+<h2>Coquetel</h2>
+<p class="lead">O Coquetel é o menu padrão e seu valor por pessoa muda automaticamente de acordo com o número de convidados.</p>
+<div class="menu">
+<div class="menu-head"><div><div class="menu-title">Coquetel</div><div style="color:var(--muted);font-size:12px;margin-top:4px">Menu padrão</div></div><div id="coquetelPrice" class="menu-price">R$ 120,00 / pessoa</div></div>
+<div class="tiers"><span class="tier">50–59 · R$ 180</span><span class="tier">60–69 · R$ 168</span><span class="tier">70–79 · R$ 156</span><span class="tier">80–89 · R$ 144</span><span class="tier">90–99 · R$ 132</span><span class="tier">100+ · R$ 120</span></div>
+<div class="menu-grid">
+<div class="menu-item"><b>Couvert</b><span>Pastas de tomate seco, provolone, gorgonzola e azeitonas pretas com grissinis e tarteletes.</span></div>
+<div class="menu-item"><b>Salgados</b><span>Seleção de salgados da experiência.</span></div>
+<div class="menu-item"><b>Doces finos</b><span>Seleção de doces finos.</span></div>
+<div class="menu-item"><b>Bolo</b><span>Pão de ló com recheio e cobertura à escolha.</span></div>
+<div class="menu-item"><b>Welcome Drink</b><span>Soda italiana.</span></div>
+<div class="menu-item"><b>Bebidas e encerramento</b><span>Refrigerantes, água, néctar de frutas, café, chá, petit fours e mousse.</span></div>
+</div>
+</div>
+</section>
+
+<section class="card full">
+<div class="kicker">04 · Lounges adicionais <span class="optional">Opcional</span></div>
+<h2>Enriqueça sua festa</h2>
+<p class="lead">Os Lounges são adicionais opcionais. Você pode não escolher nenhum ou combinar quantos desejar.</p>
+<div class="choice-grid"><label class="choice-card">
+      <input type="checkbox" class="lounge-check" value="Lounge I" data-price="26">
+      <span class="choice-inner">
+        <span class="choice-title">Lounge I</span>
+        <span class="choice-price">R$ 26,00 / pessoa</span>
+        <span class="choice-desc">Entrada fria: Salada Culatelo; rondeli recheado ao molho; sobremesa com sorvete e cobertura de chocolate.</span>
+        <span class="choice-action">Adicionar</span>
+      </span>
+    </label>
+<label class="choice-card">
+      <input type="checkbox" class="lounge-check" value="Lounge II" data-price="30">
+      <span class="choice-inner">
+        <span class="choice-title">Lounge II</span>
+        <span class="choice-price">R$ 30,00 / pessoa</span>
+        <span class="choice-desc">Entrada fria: Salada Paolo; lagarto recheado ao molho madeira; batata rústica; arroz com amêndoas; sorvete de nata com cobertura de chocolate e wafer.</span>
+        <span class="choice-action">Adicionar</span>
+      </span>
+    </label>
+<label class="choice-card">
+      <input type="checkbox" class="lounge-check" value="Lounge III" data-price="54">
+      <span class="choice-inner">
+        <span class="choice-title">Lounge III</span>
+        <span class="choice-price">R$ 54,00 / pessoa</span>
+        <span class="choice-desc">Ilha de Finger Foods, salpicão de frango, saladinha de folhas e tomate grape, fricassé de frango, bobó de camarão, escondidinho de carne seca, risoto de funghi, dadinho de tapioca, sorvete de frutas vermelhas e mini churros.</span>
+        <span class="choice-action">Adicionar</span>
+      </span>
+    </label>
+<label class="choice-card">
+      <input type="checkbox" class="lounge-check" value="Lounge IV" data-price="96">
+      <span class="choice-inner">
+        <span class="choice-title">Lounge IV</span>
+        <span class="choice-price">R$ 96,00 / pessoa</span>
+        <span class="choice-desc">Jantar com entrada fria, filé mignon ao molho, arroz com passas e amêndoas, purê de mandioquinha com chips de bacon e seleção de sobremesas.</span>
+        <span class="choice-action">Adicionar</span>
+      </span>
+    </label>
+<label class="choice-card">
+      <input type="checkbox" class="lounge-check" value="Lounge V" data-price="68">
+      <span class="choice-inner">
+        <span class="choice-title">Lounge V</span>
+        <span class="choice-price">R$ 68,00 / pessoa</span>
+        <span class="choice-desc">Ilha do Marquês com frios, queijos, brie aquecido com massa folhada e mel, pães, frutas, caldo de mandioquinha, caponata, pastas especiais, mini canelone e sobremesa.</span>
+        <span class="choice-action">Adicionar</span>
+      </span>
+    </label>
+<label class="choice-card">
+      <input type="checkbox" class="lounge-check" value="Lounge VI" data-price="20">
+      <span class="choice-inner">
+        <span class="choice-title">Lounge VI</span>
+        <span class="choice-price">R$ 20,00 / pessoa</span>
+        <span class="choice-desc">Ilha Gourmet com hot-dog, pizza, X-burguer, batata frita, palinetes de frango, mini churros e estação de balas e guloseimas.</span>
+        <span class="choice-action">Adicionar</span>
+      </span>
+    </label></div>
+</section>
+
+<section class="card full">
+<div class="kicker">05 · Open Bar <span class="optional">Opcional</span></div>
+<h2>Complete a experiência</h2>
+<p class="lead">O Open Bar também é opcional. Você pode escolher I, II, os dois ou nenhum.</p>
+<div class="choice-grid">
+<label class="choice-card"><input type="checkbox" class="bar-check" value="Open Bar I" data-price="45" onchange="recalculate();syncLabels()"><span class="choice-inner"><span class="choice-title">Open Bar I</span><span class="choice-price">R$ 45,00 / pessoa</span><span class="choice-desc">Cerveja e espumante branco.</span><span class="choice-action">Adicionar</span></span></label>
+<label class="choice-card"><input type="checkbox" class="bar-check" value="Open Bar II" data-price="85" onchange="recalculate();syncLabels()"><span class="choice-inner"><span class="choice-title">Open Bar II</span><span class="choice-price">R$ 85,00 / pessoa</span><span class="choice-desc">Cerveja, espumante branco e vinhos branco, rosé e tinto.</span><span class="choice-action">Adicionar</span></span></label>
+</div>
+</section>
+
+<section class="card">
+<div class="kicker">06 · Música</div><h2>DJ Profissional</h2>
+<div class="fixed"><div class="fixed-title">DJ Profissional</div><div class="fixed-price">R$ 450,00 · fixo</div><div class="fixed-desc">Este item já faz parte da simulação.</div></div>
+</section>
+
+<section class="card">
+<div class="kicker">07 · Resumo</div><h2>Sua experiência</h2>
+<div class="summary">
+<div class="row"><span>Evento</span><strong id="sEvent">—</strong></div>
+<div class="row"><span>Convidados</span><strong id="sGuests">—</strong></div>
+<div class="row"><span>Data</span><strong id="sDate">—</strong></div>
+<div class="row"><span>Espaço</span><strong id="sVenue">—</strong></div>
+<div class="row"><span>Locação</span><strong id="sRent">—</strong></div>
+<div class="row"><span>Sonorização</span><strong id="sSound">—</strong></div>
+<div class="row"><span>Coquetel</span><strong id="sFood">—</strong></div>
+<div class="row"><span>Lounges adicionais</span><strong id="sLounges">Nenhum</strong></div>
+<div class="row"><span>Open Bar</span><strong id="sBars">Nenhum</strong></div>
+<div class="row"><span>DJ Profissional</span><strong>R$ 450,00</strong></div>
+<div class="total"><small>ESTIMATIVA INICIAL</small><strong id="total">R$ 0,00</strong></div>
+<button class="cta" type="button" onclick="sendSimulation()">Enviar minha simulação a Alessandra</button>
+<div class="note">Esta é uma simulação inicial. Disponibilidade, condições comerciais, configuração e valor final serão confirmados pela consultora.</div>
+</div>
+</section>
+</div>
+</main>
+
+<script>
+var CONSULTANT="Alessandra Fernandes", WHATSAPP="5511942454211", LAST_STATE="";
+
+function el(id){return document.getElementById(id)}
+function money(v){
+  v=Math.round(Number(v)*100)/100;
+  var s=v.toFixed(2).split("."), i=s[0], out="";
+  while(i.length>3){out="."+i.slice(-3)+out;i=i.slice(0,-3)}
+  return "R$ "+i+out+","+s[1]
+}
+function foodUnit(g){g=parseInt(g,10)||1;if(g>=100)return 120;if(g>=90)return 132;if(g>=80)return 144;if(g>=70)return 156;if(g>=60)return 168;return 180}
+function selected(cls){
+  var a=document.getElementsByClassName(cls),r=[],i;
+  for(i=0;i<a.length;i++)if(a[i].checked)r.push(a[i]);
+  return r
+}
+function dateParts(){
+  var d=parseInt(el("day").value,10),m=parseInt(el("month").value,10),y=parseInt(el("year").value,10);
+  if(!d||!m||!y)return null;
+  return {d:d,m:m,y:y}
+}
+function validDate(p){
+  if(!p)return false;
+  var x=new Date(Date.UTC(p.y,p.m-1,p.d,12,0,0));
+  return x.getUTCFullYear()===p.y && x.getUTCMonth()===(p.m-1) && x.getUTCDate()===p.d
+}
+function weekDay(p){
+  if(!validDate(p))return -1;
+  return new Date(Date.UTC(p.y,p.m-1,p.d,12,0,0)).getUTCDay()
+}
+function dateBR(p){
+  if(!validDate(p))return "A definir";
+  return (p.d<10?"0":"")+p.d+"/"+(p.m<10?"0":"")+p.m+"/"+p.y
+}
+function syncLabels(){
+  var c=document.getElementsByClassName("choice-card"),i,input,action;
+  for(i=0;i<c.length;i++){input=c[i].getElementsByTagName("input")[0];action=c[i].getElementsByClassName("choice-action")[0];if(input&&action)action.innerHTML=input.checked?"✓ Adicionado":"Adicionar"}
+}
+function calculate(){
+  var guests=parseInt(el("guests").value,10)||1;
+  if(guests<1)guests=1;
+  var p=dateParts(), wd=weekDay(p), isSat=wd===6, option=el("venue").options[el("venue").selectedIndex];
+  var rent=parseFloat(isSat?option.getAttribute("data-sat"):option.getAttribute("data-weekday"))||0;
+  var sound=parseFloat(option.getAttribute("data-sound"))||0;
+  var fu=foodUnit(guests), ft=fu*guests, li=selected("lounge-check"), bi=selected("bar-check"), lt=0,bt=0,ln=[],bn=[],i;
+  for(i=0;i<li.length;i++){lt+=(parseFloat(li[i].getAttribute("data-price"))||0)*guests;ln.push(li[i].value)}
+  for(i=0;i<bi.length;i++){bt+=(parseFloat(bi[i].getAttribute("data-price"))||0)*guests;bn.push(bi[i].value)}
+  var total=rent+sound+ft+lt+bt+450;
+  return {guests:guests,p:p,wd:wd,isSat:isSat,option:option,rent:rent,sound:sound,fu:fu,ft:ft,li:li,bi:bi,lt:lt,bt:bt,ln:ln,bn:bn,total:total}
+}
+function recalculate(){
+  try{
+    var c=calculate(), names=["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
+    el("dayLabel").innerHTML=validDate(c.p)?names[c.wd]+" · "+dateBR(c.p):"Selecione uma data";
+    el("venueInfo").innerHTML="Locação: "+money(c.rent)+" · Sonorização: "+money(c.sound)+" · "+(validDate(c.p)?(c.isSat?"sábado":"domingo a sexta"):"valor de referência: domingo a sexta");
+    el("coquetelPrice").innerHTML=money(c.fu)+" / pessoa";
+    el("sEvent").innerHTML=el("event").value;el("sGuests").innerHTML=c.guests;el("sDate").innerHTML=dateBR(c.p);el("sVenue").innerHTML=c.option.text;
+    el("sRent").innerHTML=money(c.rent);el("sSound").innerHTML=money(c.sound);el("sFood").innerHTML=money(c.fu)+"/pessoa · "+money(c.ft);
+    el("sLounges").innerHTML=c.ln.length?c.ln.join(", ")+" · "+money(c.lt):"Nenhum";el("sBars").innerHTML=c.bn.length?c.bn.join(" + ")+" · "+money(c.bt):"Nenhum";el("total").innerHTML=money(c.total);
+    syncLabels()
+  }catch(e){}
+}
+function state(){
+  var c=selected("lounge-check").concat(selected("bar-check")),s=el("event").value+"|"+el("guests").value+"|"+el("day").value+"|"+el("month").value+"|"+el("year").value+"|"+el("venue").selectedIndex,i;
+  for(i=0;i<c.length;i++)s+="|"+c[i].value;
+  return s
+}
+function poll(){
+  var s=state();
+  if(s!==LAST_STATE){LAST_STATE=s;recalculate()}
+}
+function sendSimulation(){
+  var c=calculate(), i, ll="",bl="";
+  for(i=0;i<c.li.length;i++)ll+="• "+c.li[i].value+": "+money((parseFloat(c.li[i].getAttribute("data-price"))||0)*c.guests)+"\n";
+  if(!ll)ll="• Nenhum lounge adicional\n";
+  for(i=0;i<c.bi.length;i++)bl+="• "+c.bi[i].value+": "+money((parseFloat(c.bi[i].getAttribute("data-price"))||0)*c.guests)+"\n";
+  if(!bl)bl="• Nenhum Open Bar\n";
+  var msg="Olá, "+CONSULTANT+"! Finalizei minha simulação no configurador Mediterraneo.\n\nMINHA CONFIGURAÇÃO\n\nEvento: "+el("event").value+"\nData: "+dateBR(c.p)+"\nConvidados: "+c.guests+"\n\nESPAÇO\n"+c.option.text+"\nLocação: "+money(c.rent)+"\nSonorização: "+money(c.sound)+"\n\nGASTRONOMIA\nCoquetel: "+money(c.fu)+" por pessoa\nSubtotal Coquetel: "+money(c.ft)+"\n\nLOUNGES ADICIONAIS\n"+ll+"Subtotal Lounges: "+money(c.lt)+"\n\nOPEN BAR\n"+bl+"Subtotal Open Bar: "+money(c.bt)+"\n\nDJ PROFISSIONAL\nR$ 450,00\n\nESTIMATIVA INICIAL\n"+money(c.total)+"\n\nGostaria de conversar sobre essa configuração e validar as condições finais.";
+  window.location.href="https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(msg)
+}
+window.onload=function(){recalculate();LAST_STATE=state();setInterval(poll,350)}
+</script>
+</body>
+</html>
